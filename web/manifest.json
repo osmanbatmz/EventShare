@@ -1,0 +1,46 @@
+{
+  "short_name": "EventShare",
+  "name": "EventShare - Anılarınızı Paylaşın",
+  "description": "Etkinliklerinizde çekilen fotoğraf ve videoları tek yerde toplayın",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#8B5A3C",
+  "background_color": "#FFF8F0",
+  "orientation": "portrait-primary",
+  "categories": ["social", "photography", "events"],
+  "lang": "tr",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Yeni Etkinlik",
+      "short_name": "Etkinlik Oluştur",
+      "description": "Yeni bir etkinlik oluşturun",
+      "url": "/create-event",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Etkinliğe Katıl",
+      "short_name": "Katıl",
+      "description": "Mevcut bir etkinliğe katılın",
+      "url": "/join-event",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ]
+} 

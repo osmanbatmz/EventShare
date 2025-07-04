@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#8B5A3C" />
+  <meta name="description" content="EventShare - Etkinliklerinizde çekilen fotoğraf ve videoları tek yerde toplayın" />
+  
+  <title>EventShare - Anılarınızı Paylaşın</title>
+  
+  <!-- # Favicon -->
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  
+  <!-- # PWA Manifest -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  
+  <!-- # Preconnect to Supabase -->
+  <link rel="preconnect" href="https://gzerwprcilncitovrdwp.supabase.co" />
+  
+  <style>
+    /* # Loading Screen */
+    #loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #FFF8F0 0%, #F5E6D3 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .loading-content {
+      text-align: center;
+      color: #2D1810;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #E8DDD4;
+      border-top: 3px solid #8B5A3C;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .loading-subtitle {
+      font-size: 16px;
+      color: #5D4037;
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    EventShare uygulamasını çalıştırmak için JavaScript'i etkinleştirmeniz gerekiyor.
+  </noscript>
+  
+  <div id="root">
+    <!-- # Loading Screen -->
+    <div id="loading">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-title">EventShare</div>
+        <div class="loading-subtitle">Anılarınızı paylaşın...</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // # Remove loading screen when app loads
+    window.addEventListener('load', function() {
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html> 
