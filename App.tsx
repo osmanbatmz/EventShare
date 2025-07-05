@@ -4,7 +4,7 @@ import 'react-native-url-polyfill/auto'
 import React, { useEffect, useState, useRef } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer, useNavigation } from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import * as SplashScreen from 'expo-splash-screen'
 import { Platform, View, Text } from 'react-native'
@@ -19,7 +19,7 @@ import EventDetailScreen from './src/screens/EventDetailScreen'
 import CreateEventScreen from './src/screens/CreateEventScreen'
 import ProfileScreen from './src/screens/ProfileScreen'
 import WebEventJoinScreen from './src/screens/WebEventJoinScreen'
-import WebHomeScreen from './src/screens/WebHomeScreen'
+
 import EnhancedEventDetailScreen from './src/screens/EnhancedEventDetailScreen'
 
 // Services
@@ -85,9 +85,11 @@ export default function App() {
   const { user, isAuthenticated, setUser, setAuthenticated, isGuestMode } = useAuth()
   const { setLoading } = useUI()
   const [isReady, setIsReady] = useState(false)
-  const [initialRoute, setInitialRoute] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const navigationRef = useRef<any>(null)
+
+  // DEBUG LOG
+  console.log('App render', { isReady, isAuthenticated, isGuestMode })
 
   useEffect(() => {
     initializeApp()
@@ -200,29 +202,13 @@ export default function App() {
   }
 
   const checkWebURL = () => {
-    if (isWebPlatform()) {
-      try {
-        const deepLinkData = handleWebURL()
-        if (deepLinkData?.type === 'event_join' && deepLinkData.eventCode) {
-          setInitialRoute('JoinEvent')
-        } else if (deepLinkData?.type === 'event_view' && deepLinkData.eventId) {
-          setInitialRoute('EventDetail')
-        } else {
-          // # Web'de ana sayfa göster
-          setInitialRoute('WebHome')
-        }
-      } catch (err) {
-        console.error('Web URL kontrol hatası:', err)
-        setInitialRoute('WebHome')
-      }
-    } else {
-      // # Mobil için Auth ekranı başlangıç
-      setInitialRoute('Auth')
-    }
+    // Web ve mobil için aynı mantık kullan
+    console.log('🌐 Platform kontrolü:', isWebPlatform() ? 'Web' : 'Mobil')
   }
 
   // # Error durumunda
   if (error) {
+    console.log('Render: Error durumu', error)
     return (
       <View style={{ 
         flex: 1, 
@@ -245,6 +231,7 @@ export default function App() {
   }
 
   if (!isReady) {
+    console.log('Render: Yükleniyor ekranı')
     return (
       <View style={{ 
         flex: 1, 
@@ -259,6 +246,8 @@ export default function App() {
     )
   }
 
+  console.log('Render: Navigation başlıyor', { isAuthenticated, isGuestMode })
+
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
@@ -268,52 +257,19 @@ export default function App() {
               headerShown: false,
               cardStyle: { backgroundColor: '#FFF8F0' }
             }}
-            initialRouteName={
-              isWebPlatform() 
-                ? (initialRoute as keyof RootStackParamList || 'WebHome')
-                : (isGuestMode || isAuthenticated === true ? 'Home' : 'Auth')
-            }
+            initialRouteName={isGuestMode || isAuthenticated === true ? 'Home' : 'Auth'}
           >
-            {/* # Web Screens - No auth required */}
-            {isWebPlatform() && (
-              <>
-                <Stack.Screen 
-                  name="WebHome" 
-                  component={WebHomeScreen}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen 
-                  name="JoinEvent" 
-                  component={WebEventJoinScreen}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen 
-                  name="EventDetail" 
-                  component={EnhancedEventDetailScreen}
-                  options={{
-                    headerShown: true,
-                    title: 'Etkinlik Detayı',
-                    headerStyle: { backgroundColor: '#FFF8F0' },
-                    headerTintColor: '#2D1810',
-                    headerBackTitle: '',
-                  }}
-                />
-              </>
-            )}
-            
             {/* # Auth Screen - Always available */}
             <Stack.Screen 
               name="Auth" 
-              component={AuthScreen}
+              component={props => {
+                console.log('Render: AuthScreen');
+                return <AuthScreen {...props} />
+              }}
               options={{
                 headerShown: false,
               }}
             />
-            
             {/* # Main App Screens */}
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen 

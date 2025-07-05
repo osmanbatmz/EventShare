@@ -508,7 +508,7 @@ const HomeScreen: React.FC = () => {
 
   const getHeaderSubtitle = () => {
     if (isGuestMode) {
-      return 'Etkinlik kodunu girerek görüntüleyebilirsiniz 👁️'
+      return 'Etkinliklere katılmak için QR kod tarayın veya kod girin'
     }
     return 'Bugün hangi anıları keşfedelim? 🎉'
   }
@@ -802,23 +802,7 @@ const HomeScreen: React.FC = () => {
             </ScrollView>
           </View>
 
-          {/* # Guest Mode - Misafir kullanıcılar için */}
-          {isGuestMode && (
-            <View style={styles.userEventsSection}>
-              <View style={styles.emptyState}>
-                <LinearGradient
-                  colors={[COLORS.surface, COLORS.surfaceWarm]}
-                  style={styles.emptyCard}
-                >
-                  <Text style={styles.emptyIcon}>👁️</Text>
-                  <Text style={styles.emptyTitle}>Misafir Modu</Text>
-                  <Text style={styles.emptyText}>
-                    Etkinlik kodunu girerek görüntüleyebilirsiniz
-                  </Text>
-                </LinearGradient>
-              </View>
-            </View>
-          )}
+
         </SafeAreaView>
       </LinearGradient>
 

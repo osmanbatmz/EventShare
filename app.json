@@ -13,7 +13,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "QR kod taramak için kamera erişimine izin verin.",
+        "CFBundleDisplayName": "EventShare",
+        "CFBundleName": "EventShare"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,15 +27,21 @@
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
-        "android.permission.CAMERA",
         "android.permission.CAMERA"
-      ]
+      ],
+      "package": "com.osmanbatmz.eventshareapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-barcode-scanner"
+      "expo-barcode-scanner",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "QR kod taramak için kamera erişimine izin verin."
+        }
+      ]
     ],
     "extra": {
       "eas": {

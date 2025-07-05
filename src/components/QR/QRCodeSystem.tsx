@@ -11,6 +11,7 @@ import {
   Linking,
   Share,
   ScrollView,
+  Platform,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Camera, CameraView } from 'expo-camera'
@@ -56,8 +57,31 @@ const QRScanner: React.FC<{
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync()
-      setHasPermission(status === 'granted')
+      try {
+        console.log('📷 Requesting camera permission...')
+        
+        // Web için farklı izin kontrolü
+        if (Platform.OS === 'web') {
+          // Web'de kamera izni farklı çalışır
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+          stream.getTracks().forEach(track => track.stop()) // Test için stream'i kapat
+          setHasPermission(true)
+          console.log('✅ Web camera permission granted')
+        } else {
+          const { status } = await Camera.requestCameraPermissionsAsync()
+          console.log('📷 Camera permission status:', status)
+          setHasPermission(status === 'granted')
+          
+          if (status !== 'granted') {
+            console.log('❌ Camera permission denied')
+          } else {
+            console.log('✅ Camera permission granted')
+          }
+        }
+      } catch (error) {
+        console.error('📷 Camera permission error:', error)
+        setHasPermission(false)
+      }
     })()
   }, [])
 
@@ -106,11 +130,25 @@ const QRScanner: React.FC<{
         <Text style={styles.permissionSubtext}>
           QR kod taramak için kamera erişimine izin verin
         </Text>
+        <Text style={styles.permissionSubtext}>
+          Lütfen ayarlardan kamera iznini etkinleştirin
+        </Text>
         <TouchableOpacity
           style={styles.permissionButton}
           onPress={() => Linking.openSettings()}
         >
           <Text style={styles.permissionButtonText}>Ayarlara Git</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.permissionButton, { marginTop: 12, backgroundColor: '#8B5A3C' }]}
+          onPress={() => {
+            // Tekrar izin iste
+            Camera.requestCameraPermissionsAsync().then(({ status }) => {
+              setHasPermission(status === 'granted')
+            })
+          }}
+        >
+          <Text style={styles.permissionButtonText}>Tekrar Dene</Text>
         </TouchableOpacity>
       </View>
     )
@@ -129,13 +167,39 @@ const QRScanner: React.FC<{
 
       {/* # Camera */}
       <View style={styles.cameraContainer}>
-        <CameraView
-          style={styles.camera}
-          barcodeScannerSettings={{
-            barcodeTypes: ["qr"],
-          }}
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-        />
+        {Platform.OS === 'web' ? (
+          <View style={styles.camera}>
+            <Text style={styles.webCameraText}>
+              📷 Web'de QR Tarama
+            </Text>
+            <Text style={styles.webCameraSubtext}>
+              QR kodu taramak için kamera izni gerekli
+            </Text>
+            <TouchableOpacity
+              style={styles.webCameraButton}
+              onPress={() => {
+                // Web'de kamera izni iste
+                navigator.mediaDevices.getUserMedia({ video: true })
+                  .then(() => {
+                    setHasPermission(true)
+                  })
+                  .catch(() => {
+                    setHasPermission(false)
+                  })
+              }}
+            >
+              <Text style={styles.webCameraButtonText}>Kamera İzni Ver</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <CameraView
+            style={styles.camera}
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr"],
+            }}
+            onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          />
+        )}
         
         {/* # Scan Frame */}
         <View style={styles.scanFrame}>
@@ -181,8 +245,10 @@ const QRGenerator: React.FC<{
   const qrRef = useRef<ViewShot>(null)
   const [saving, setSaving] = useState(false)
 
-  // # Generate QR code data
-  const qrData = `https://eventshare.app/join/${event.event_code}`
+  // # Generate QR code data - Web URL for better compatibility
+  const qrData = Platform.OS === 'web' 
+    ? `${window.location.origin}/join/${event.event_code}`
+    : `https://eventshare.app/join/${event.event_code}`
 
   const copyEventCode = () => {
     // # Generate web URL for sharing
@@ -198,6 +264,18 @@ const QRGenerator: React.FC<{
   const saveQRCode = async () => {
     try {
       setSaving(true)
+      
+      // # Check if we're in Expo Go (limited functionality)
+      const isExpoGo = __DEV__ && !(global as any).__EXPO_DEVTOOLS_GLOBAL_HOOK__
+      
+      if (isExpoGo) {
+        Alert.alert(
+          '⚠️ Expo Go Sınırlaması', 
+          'Expo Go\'da galeri kaydetme özelliği kısıtlıdır. Tam özellik için development build kullanın.',
+          [{ text: 'Tamam' }]
+        )
+        return
+      }
       
       // # Request permissions
       const { status } = await MediaLibrary.requestPermissionsAsync()
@@ -733,6 +811,37 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+    textAlign: 'center',
+  },
+  
+  // # Web Camera Styles
+  webCameraText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.textDark,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  
+  webCameraSubtext: {
+    fontSize: 14,
+    color: COLORS.textMedium,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  
+  webCameraButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    marginTop: 16,
+  },
+  
+  webCameraButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
   },
 })

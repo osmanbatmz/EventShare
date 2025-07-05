@@ -10,6 +10,7 @@ export type RootStackParamList = {
   Profile: undefined
   // # Web-specific screens
   WebHome: undefined
+  WebJoin: undefined
   // # New role-specific screens
   OrganizerDashboard: { eventId: string }
   EventManagement: { eventId: string }
