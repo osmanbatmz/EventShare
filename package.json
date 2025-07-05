@@ -27,6 +27,7 @@
     "expo-media-library": "~17.1.7",
     "expo-splash-screen": "~0.30.9",
     "expo-status-bar": "~2.2.3",
+    "expo-updates": "^0.28.16",
     "react": "19.0.0",
     "react-dom": "^19.0.0",
     "react-native": "0.79.5",

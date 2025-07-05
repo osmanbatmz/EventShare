@@ -20,13 +20,28 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-barcode-scanner"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4ae93b6b-9257-40db-8fbe-66c142447907"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4ae93b6b-9257-40db-8fbe-66c142447907"
+    }
   }
 }
