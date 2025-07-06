@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# /join/{event_code} URL'lerini join.html'e yönlendir
+RewriteRule ^join/([A-Z0-9]{6})$ join.html [L]
+
+# Diğer tüm URL'leri index.html'e yönlendir (SPA için)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.html [L]
+
+# CORS headers (gerekirse)
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization" 

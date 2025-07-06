@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#8B5A3C" />
+  <meta name="description" content="EventShare - Etkinliklerinizde çekilen fotoğraf ve videoları tek yerde toplayın" />
+  
+  <title>EventShare - Etkinlik Detayı</title>
+  
+  <!-- # Favicon -->
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  
+  <!-- # Preconnect to Supabase -->
+  <link rel="preconnect" href="https://gzerwprcilncitovrdwp.supabase.co" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #FFF8F0 0%, #F5E6D3 100%);
+      min-height: 100vh;
+      color: #2D1810;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-top: 40px;
+    }
+    
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      color: #8B5A3C;
+      margin-bottom: 8px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: #5D4037;
+    }
+    
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #E8DDD4;
+      border-top: 3px solid #8B5A3C;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2D1810;
+    }
+    
+    .error {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .error-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    .error-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #E74C3C;
+      margin-bottom: 16px;
+    }
+    
+    .error-text {
+      font-size: 16px;
+      color: #5D4037;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    
+    .back-button {
+      background: #8B5A3C;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .back-button:hover {
+      background: #A67C52;
+    }
+    
+    .event-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border: 2px solid #F4E4BC;
+    }
+    
+    .event-type {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .event-type-icon {
+      font-size: 24px;
+      margin-right: 12px;
+    }
+    
+    .event-type-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #5D4037;
+      text-transform: capitalize;
+    }
+    
+    .event-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #2D1810;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    
+    .event-description {
+      font-size: 16px;
+      color: #5D4037;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    
+    .event-details {
+      display: grid;
+      gap: 12px;
+    }
+    
+    .detail-row {
+      display: flex;
+      align-items: center;
+    }
+    
+    .detail-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #5D4037;
+      width: 120px;
+      flex-shrink: 0;
+    }
+    
+    .detail-value {
+      font-size: 14px;
+      color: #2D1810;
+      flex: 1;
+    }
+    
+    .action-buttons {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .button {
+      padding: 16px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .primary-button {
+      background: linear-gradient(135deg, #8B5A3C 0%, #A67C52 100%);
+      color: white;
+    }
+    
+    .primary-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(139, 90, 60, 0.3);
+    }
+    
+    .secondary-button {
+      background: linear-gradient(135deg, #6A9F58 0%, #7FB069 100%);
+      color: white;
+    }
+    
+    .secondary-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106, 159, 88, 0.3);
+    }
+    
+    .info-card {
+      background: rgba(139, 90, 60, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #F4E4BC;
+    }
+    
+    .info-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2D1810;
+      margin-bottom: 16px;
+    }
+    
+    .info-text {
+      font-size: 14px;
+      color: #5D4037;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    
+    .info-text:last-child {
+      margin-bottom: 0;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px;
+      }
+      
+      .event-card {
+        padding: 24px;
+      }
+      
+      .event-title {
+        font-size: 24px;
+      }
+      
+      .detail-label {
+        width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">EventShare</div>
+      <div class="subtitle">Anılarınızı paylaşın</div>
+    </div>
+    
+    <div id="content">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Etkinlik yükleniyor...</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Supabase configuration
+    const SUPABASE_URL = 'https://gzerwprcilncitovrdwp.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6ZXJ3cHJjaWxuY2l0b3ZyZHdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4OTAzOTQsImV4cCI6MjA2NjQ2NjM5NH0.FuMaXd7uRevAn5Wxoqw06pgea0z9HlxehQirxktoBV8'
+    
+    // Event type emojis
+    const EVENT_TYPE_EMOJIS = {
+      wedding: '💒',
+      birthday: '🎂',
+      corporate: '🏢',
+      graduation: '🎓',
+      anniversary: '💕',
+      other: '🎉'
+    }
+    
+    // Format date
+    function formatDate(dateString) {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    }
+    
+    // Get event code from URL
+    function getEventCodeFromURL() {
+      const pathSegments = window.location.pathname.split('/')
+      return pathSegments[pathSegments.length - 1]
+    }
+    
+    // Get app deep link from URL parameters
+    function getAppDeepLink() {
+      const urlParams = new URLSearchParams(window.location.search)
+      return urlParams.get('app')
+    }
+    
+    // Load event data
+    async function loadEvent(eventCode) {
+      try {
+        console.log('🔍 Etkinlik aranıyor:', eventCode)
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/events?event_code=eq.${eventCode.toUpperCase()}&status=eq.active&select=*,profiles!events_creator_id_fkey(display_name)`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        
+        const events = await response.json()
+        
+        if (!events || events.length === 0) {
+          throw new Error('Etkinlik bulunamadı')
+        }
+        
+        const event = events[0]
+        console.log('✅ Etkinlik bulundu:', event.title)
+        
+        displayEvent(event)
+        
+      } catch (error) {
+        console.error('Etkinlik yükleme hatası:', error)
+        displayError('Etkinlik bulunamadı veya sona ermiş')
+      }
+    }
+    
+    // Display event
+    function displayEvent(event) {
+      const content = document.getElementById('content')
+      
+      content.innerHTML = `
+        <div class="event-card">
+          <div class="event-type">
+            <span class="event-type-icon">${EVENT_TYPE_EMOJIS[event.event_type] || '🎉'}</span>
+            <span class="event-type-text">${event.event_type}</span>
+          </div>
+          
+          <h1 class="event-title">${event.title}</h1>
+          
+          ${event.description ? `<p class="event-description">${event.description}</p>` : ''}
+          
+          <div class="event-details">
+            <div class="detail-row">
+              <span class="detail-label">📅 Tarih:</span>
+              <span class="detail-value">${formatDate(event.start_date)} - ${formatDate(event.end_date)}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">👤 Organizatör:</span>
+              <span class="detail-value">${event.profiles?.display_name || 'Bilinmeyen'}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">👥 Katılımcı:</span>
+              <span class="detail-value">${event.participant_count || 0} kişi</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">📸 Medya:</span>
+              <span class="detail-value">${event.media_count || 0} dosya</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">🔑 Kod:</span>
+              <span class="detail-value">${event.event_code}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <a href="https://apps.apple.com/app/eventshare/id123456789" class="button primary-button">
+            📱 Uygulamayı İndir
+          </a>
+          
+          <button onclick="openInApp('${event.event_code}')" class="button secondary-button">
+            🔗 Uygulamada Aç
+          </button>
+        </div>
+        
+        <div class="info-card">
+          <div class="info-title">ℹ️ Bilgi</div>
+          <div class="info-text">• Bu etkinlik EventShare uygulamasında oluşturuldu</div>
+          <div class="info-text">• Etkinliğe katılmak için uygulamayı indirin</div>
+          <div class="info-text">• QR kodu tarayarak hızlıca katılabilirsiniz</div>
+          <div class="info-text">• Fotoğraf ve videolarınızı paylaşabilirsiniz</div>
+        </div>
+      `
+    }
+    
+    // Display error
+    function displayError(message) {
+      const content = document.getElementById('content')
+      
+      content.innerHTML = `
+        <div class="error">
+          <div class="error-icon">❌</div>
+          <div class="error-title">Hata</div>
+          <div class="error-text">${message}</div>
+          <button onclick="window.history.back()" class="back-button">Geri Dön</button>
+        </div>
+      `
+    }
+    
+    // Copy deep link
+    function openInApp(eventCode) {
+      const deepLink = getAppDeepLink() || `eventshare://join/${eventCode}`
+      
+      // Uygulamayı açmaya çalış
+      window.location.href = deepLink
+      
+      // 3 saniye sonra geri dön (uygulama açılmadıysa)
+      setTimeout(() => {
+        // Eğer hala bu sayfadaysa, uygulama açılmamış demektir
+        if (document.visibilityState !== 'hidden') {
+          alert('Uygulama bulunamadı. Lütfen önce uygulamayı indirin.')
+        }
+      }, 3000)
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      const eventCode = getEventCodeFromURL()
+      
+      if (eventCode && eventCode.length === 6) {
+        // Önce uygulamayı açmaya çalış
+        tryOpenApp(eventCode)
+        // Sonra web sayfasını yükle
+        loadEvent(eventCode)
+      } else {
+        displayError('Geçersiz etkinlik kodu')
+      }
+    })
+    
+    // Try to open app
+    function tryOpenApp(eventCode) {
+      const deepLink = getAppDeepLink() || `eventshare://join/${eventCode}`
+      
+      // iOS için
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        // iOS'ta uygulama açma denemesi
+        setTimeout(() => {
+          window.location.href = deepLink
+        }, 1000)
+      }
+      
+      // Android için
+      else if (/Android/.test(navigator.userAgent)) {
+        // Android'de uygulama açma denemesi
+        setTimeout(() => {
+          window.location.href = deepLink
+        }, 1000)
+      }
+      
+      // Diğer platformlar için
+      else {
+        // Deep link'i kopyala ve kullanıcıya bildir
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(deepLink)
+          console.log('📋 Deep link panoya kopyalandı:', deepLink)
+        }
+      }
+    }
+  </script>
+</body>
+</html> 
